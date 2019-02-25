@@ -3,7 +3,7 @@
 class MolecularTestingLabs
 {
     const ENDPOINT = 'ENDPOINT_HERE';
-    const ENDPOINT_STAGING = 'STAGING_ENDPOINT HERE';
+    const ENDPOINT_STAGING = 'https://lisbeta4.moleculartestinglabs.com';
 
     private $endpoint;
     private $headers;
@@ -44,11 +44,11 @@ class MolecularTestingLabs
      * @param bool $take_tests_same_day
      * @return \Illuminate\Http\Response
      */
-    public function placeOrder(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_id, string $physician_id, string $practice_id, string $lob, bool $fulfillment = false, string $ordered_date, array $shipping_details)
+    public function placeOrder(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment = true, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
     {
         // Generate Request Data
-        $request_data = $this->buildRequestData($order_number, $phone, $email, $gender, $date_of_birth, $panel_id, $physician_id, $practice_id, $lob, $fulfillment = false, $ordered_date, $shipping_details);
-
+        $request_data = $this->buildRequestData($order_number, $phone, $email, $gender, $date_of_birth, $panel_ids, $physician_id, $lob, $fulfillment, $pwn_req_number, $first_name, $last_name, $address1, $city, $state, $postcode, $country);
+        
         // Make request
         $request = $this->makeRequest($this->endpoint . '/PlaceOrder', $request_data, $this->headers, true);
 
@@ -128,23 +128,29 @@ class MolecularTestingLabs
      * @param  string  $url
      * @return string
      */
-    private function buildRequestData(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $practice_id, string $lob, bool $fulfillment, string $order_date, array $shipping_details, $pwn_req_number)
+    private function buildRequestData(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment, $pwn_req_number, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
     {
         $data = [
-            'shipping_info' => $shipping_info,
+            'shipping_info' => [
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'address_1' => $address1,
+                'address_2' => '',
+                'city' => $city,
+                'state' => $state,
+                'postcode' => $postcode,
+                'country' => $country
+            ],
             'order_number' => $order_number,
-            'ordered_date' => $order_date, //'2018-07-09T19:53:08.885569Z',
+            'ordered_date' => date('c', strtotime('now')), //'2018-07-09T19:53:08.885569Z',
             'gender' => $gender,
             'date_of_birth' => $date_of_birth,
             'email': $email,
             'phone': $phone,
-            'shipping_method' => 7,
             'panel_id' => $panel_ids, //[26, 27],
             'physician_id' => $physician_id,
 			'lob' => $lob, //'SC',
 			'fulfillment' => $fulfullment,
-			'kit_id' => null,
-			'patient_signature' => null,
             'pwn_req_number' => $pwn_req_number
         ];
 
