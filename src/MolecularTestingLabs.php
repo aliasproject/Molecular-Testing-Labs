@@ -48,7 +48,7 @@ class MolecularTestingLabs
     {
         // Generate Request Data
         $request_data = $this->buildRequestData($order_number, $phone, $email, $gender, $date_of_birth, $panel_ids, $physician_id, $lob, $fulfillment, $pwn_req_number, $first_name, $last_name, $address1, $city, $state, $postcode, $country);
-        
+
         // Make request
         $request = $this->makeRequest($this->endpoint . '/PlaceOrder', $request_data, $this->headers, true);
 
@@ -57,14 +57,82 @@ class MolecularTestingLabs
     }
 
     /**
+     * Register Kit
+     *
+     * @param string $first_name
+     * @param string $last_name
+     * @param string $dob
+     * @param string $gender
+     * @param string $email
+     * @param string $address
+     * @param string $city
+     * @param string $state
+     * @param int $zip
+     * @param string $home_phone
+     * @param array $test_types
+     * @param bool $take_tests_same_day
+     * @return \Illuminate\Http\Response
+     */
+    public function registerKit(string $kit_id, string $pwn_req_number, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $gender, string $date_of_birth, string $email, int $phone)
+    {
+        $registerKit = [
+            [
+         	    'lob' => 'SC',
+         		'kit_id' => $kit_id,
+                'pwn_req_number' => $pwn_req_number,
+         		'patient_info' => [
+                    'first_name': $first_name,
+                 	'last_name': $last_name,
+                    'address_1': $address1,
+                    'address_2': "",
+                    'city': $city,
+                    'state': $state,
+                    'postcode': $postcode,
+                    'gender': $gender,
+                 	'date_of_birth': $date_of_birth,
+                 	'email': $email,
+                 	'phone': $phone
+                ]
+            ]
+         ];
+
+         // Make request
+         $request = $this->makeRequest($this->endpoint . '/RegisterKit', $registerKit, $this->headers, true);
+
+         print_r($request);
+         die('fin');
+
+         // Return Results
+         return json_decode($request, TRUE);
+     }
+
+    /**
      * Notifications
      *
-     * @param  string  $pdf
+     * @param  string  $lob - SC, DNA, FIT & CGX
+     * @param  string  $type - kit_shipped, kit_received, kit_rejected
+     * @param  string  $order_number
      * @return string
      */
-    public function notification()
+    public function notification(string $lob, string $type, string $order_number)
     {
-        // /Notification
+        $notifiction_arr = [
+            'lob' => 'SC',
+            'type' => '',
+        ];
+
+        // If order number exists, add to array
+        if ($order_number) {
+            $notification_arr['order_number'] = $order_number;
+        }
+
+        $notification = [$notification_arr];
+
+        // Make request
+        $request = $this->makeRequest($this->endpoint . '/Notification', $notification, $this->headers, true);
+
+        // Return Results
+        return json_decode($request, TRUE);
     }
 
     /**
@@ -145,8 +213,8 @@ class MolecularTestingLabs
             'ordered_date' => date('c', strtotime('now')), //'2018-07-09T19:53:08.885569Z',
             'gender' => $gender,
             'date_of_birth' => $date_of_birth,
-            'email': $email,
-            'phone': $phone,
+            'email' => $email,
+            'phone' => $phone,
             'panel_id' => $panel_ids, //[26, 27],
             'physician_id' => $physician_id,
 			'lob' => $lob, //'SC',
