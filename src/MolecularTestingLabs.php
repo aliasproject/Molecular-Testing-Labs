@@ -47,13 +47,34 @@ class MolecularTestingLabs
     public function placeOrder(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment = true, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
     {
         // Generate Request Data
-        $request_data = $this->buildRequestData($order_number, $phone, $email, $gender, $date_of_birth, $panel_ids, $physician_id, $lob, $fulfillment, $pwn_req_number, $first_name, $last_name, $address1, $city, $state, $postcode, $country);
+        $request_data = json_encode([[
+            'shipping_info' => [
+                'first_name' => $first_name,
+                'last_name' => $last_name,
+                'address_1' => $address1,
+                'address_2' => '',
+                'city' => $city,
+                'state' => $state,
+                'postcode' => $postcode,
+                'country' => $country
+            ],
+            'order_number' => $order_number,
+            'ordered_date' => date('c', strtotime('now')), //'2018-07-09T19:53:08.885569Z',
+            'gender' => $gender,
+            'date_of_birth' => $date_of_birth,
+            'email' => $email,
+            'phone' => $phone,
+            'panel_id' => $panel_ids, //[26, 27],
+            'physician_id' => $physician_id,
+			'lob' => $lob, //'SC',
+			'fulfillment' => $fulfillment,
+        ]]);
 
         // Make request
-        $request = $this->makeRequest($this->endpoint . '/PlaceOrder', $request_data, $this->headers, true);
+        $response = $this->makeRequest($this->endpoint . '/PlaceOrder', $request_data, true);
 
         // Return Results
-        return json_decode($request, TRUE);
+        return json_decode($response);
     }
 
     /**
@@ -81,23 +102,23 @@ class MolecularTestingLabs
          		'kit_id' => $kit_id,
                 'pwn_req_number' => $pwn_req_number,
          		'patient_info' => [
-                    'first_name': $first_name,
-                 	'last_name': $last_name,
-                    'address_1': $address1,
-                    'address_2': "",
-                    'city': $city,
-                    'state': $state,
-                    'postcode': $postcode,
-                    'gender': $gender,
-                 	'date_of_birth': $date_of_birth,
-                 	'email': $email,
-                 	'phone': $phone
+                    'first_name' => $first_name,
+                 	'last_name' => $last_name,
+                    'address_1' => $address1,
+                    'address_2' => "",
+                    'city' => $city,
+                    'state' => $state,
+                    'postcode' => $postcode,
+                    'gender' => $gender,
+                 	'date_of_birth' => $date_of_birth,
+                 	'email' => $email,
+                 	'phone' => $phone
                 ]
             ]
          ];
 
          // Make request
-         $request = $this->makeRequest($this->endpoint . '/RegisterKit', $registerKit, $this->headers, true);
+         $request = $this->makeRequest($this->endpoint . '/RegisterKit', $registerKit, true);
 
          print_r($request);
          die('fin');
@@ -129,7 +150,7 @@ class MolecularTestingLabs
         $notification = [$notification_arr];
 
         // Make request
-        $request = $this->makeRequest($this->endpoint . '/Notification', $notification, $this->headers, true);
+        $request = $this->makeRequest($this->endpoint . '/Notification', $notification, true);
 
         // Return Results
         return json_decode($request, TRUE);
@@ -188,41 +209,6 @@ class MolecularTestingLabs
     public function decodePDF(string $pdf)
     {
         return base64_decode($pdf);
-    }
-
-    /**
-     * Build Request Data
-     *
-     * @param  string  $url
-     * @return string
-     */
-    private function buildRequestData(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment, $pwn_req_number, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
-    {
-        $data = [
-            'shipping_info' => [
-                'first_name' => $first_name,
-                'last_name' => $last_name,
-                'address_1' => $address1,
-                'address_2' => '',
-                'city' => $city,
-                'state' => $state,
-                'postcode' => $postcode,
-                'country' => $country
-            ],
-            'order_number' => $order_number,
-            'ordered_date' => date('c', strtotime('now')), //'2018-07-09T19:53:08.885569Z',
-            'gender' => $gender,
-            'date_of_birth' => $date_of_birth,
-            'email' => $email,
-            'phone' => $phone,
-            'panel_id' => $panel_ids, //[26, 27],
-            'physician_id' => $physician_id,
-			'lob' => $lob, //'SC',
-			'fulfillment' => $fulfullment,
-            'pwn_req_number' => $pwn_req_number
-        ];
-
-        return $data;
     }
 
     /**
