@@ -47,7 +47,7 @@ class MolecularTestingLabs
     public function placeOrder(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment = true, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
     {
         // Generate Request Data
-        $request_data = json_encode([[
+        $request_data = [[
             'shipping_info' => [
                 'first_name' => $first_name,
                 'last_name' => $last_name,
@@ -68,7 +68,7 @@ class MolecularTestingLabs
             'physician_id' => $physician_id,
 			'lob' => $lob, //'SC',
 			'fulfillment' => $fulfillment,
-        ]]);
+        ]];
 
         // Make request
         $response = $this->makeRequest($this->endpoint . '/PlaceOrder', $request_data, true);
@@ -135,11 +135,11 @@ class MolecularTestingLabs
      * @param  string  $order_number
      * @return string
      */
-    public function notification(string $lob, string $type, string $order_number)
+    public function notification(string $lob = 'SC', string $type = 'kit_shipped', string $order_number = NULL)
     {
-        $notifiction_arr = [
-            'lob' => 'SC',
-            'type' => '',
+        $notification = [
+            'lob' => $lob,
+            'type' => $type,
         ];
 
         // If order number exists, add to array
@@ -147,10 +147,8 @@ class MolecularTestingLabs
             $notification_arr['order_number'] = $order_number;
         }
 
-        $notification = [$notification_arr];
-
         // Make request
-        $request = $this->makeRequest($this->endpoint . '/Notification', $notification, true);
+        $request = $this->makeRequest($this->endpoint . '/Notification', $notification);
 
         // Return Results
         return json_decode($request, TRUE);
@@ -217,17 +215,17 @@ class MolecularTestingLabs
      * @param  string  $url
      * @return string
      */
-    private function makeRequest(string $url, string $data = '', bool $post = false)
+    private function makeRequest(string $url, array $data = [], bool $post = false)
     {
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_URL, $url . '?' . http_build_query($data));
         curl_setopt($ch, CURLOPT_POST, $post);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.13) Gecko/20080311 Firefox/2.0.0.13');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 
         if ($post) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
 
         $result = curl_exec($ch);
