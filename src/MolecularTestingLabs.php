@@ -1,5 +1,6 @@
 <?php namespace AliasProject\MolecularTestingLabs;
 
+use Log;
 class MolecularTestingLabs
 {
     const ENDPOINT = 'ENDPOINT_HERE';
@@ -94,11 +95,11 @@ class MolecularTestingLabs
      * @param bool $take_tests_same_day
      * @return \Illuminate\Http\Response
      */
-    public function registerKit(string $kit_id, string $pwn_req_number, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $gender, string $date_of_birth, string $email, int $phone)
+    public function registerKit(string $kit_id, string $pwn_req_number, string $lob, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $gender, string $date_of_birth, string $email, string $phone)
     {
         $registerKit = [
             [
-         	    'lob' => 'SC',
+         	    'lob' => $lob,
          		'kit_id' => $kit_id,
                 'pwn_req_number' => $pwn_req_number,
          		'patient_info' => [
@@ -112,19 +113,16 @@ class MolecularTestingLabs
                     'gender' => $gender,
                  	'date_of_birth' => $date_of_birth,
                  	'email' => $email,
-                 	'phone' => $phone
+                    'phone' => $phone
                 ]
             ]
-         ];
+        ];
 
-         // Make request
-         $request = $this->makeRequest($this->endpoint . '/RegisterKit', $registerKit, true);
+        // Make request
+        $request = $this->makeRequest($this->endpoint . '/RegisterKit', $registerKit, true);
 
-         print_r($request);
-         die('fin');
-
-         // Return Results
-         return json_decode($request, TRUE);
+        // Return Results
+        return json_decode($request, TRUE);
      }
 
     /**
