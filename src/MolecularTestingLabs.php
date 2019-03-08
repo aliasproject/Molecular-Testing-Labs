@@ -45,7 +45,7 @@ class MolecularTestingLabs
      * @param bool $take_tests_same_day
      * @return \Illuminate\Http\Response
      */
-    public function placeOrder(string $order_number, int $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment = true, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
+    public function placeOrder(string $order_number, string $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment = true, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
     {
         // Generate Request Data
         $request_data = [[
