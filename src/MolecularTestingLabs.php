@@ -3,7 +3,7 @@
 use Log;
 class MolecularTestingLabs
 {
-    const ENDPOINT = 'ENDPOINT_HERE';
+    const ENDPOINT = 'https://lisapi.moleculartestinglabs.com';
     const ENDPOINT_STAGING = 'https://lisbeta4.moleculartestinglabs.com';
 
     private $endpoint;
