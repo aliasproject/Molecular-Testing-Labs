@@ -36,7 +36,8 @@ class MolecularTestingLabs
      * @param string $dob
      * @param string $gender
      * @param string $email
-     * @param string $address
+     * @param string $address1
+     * @param string $address2
      * @param string $city
      * @param string $state
      * @param int $zip
@@ -45,7 +46,7 @@ class MolecularTestingLabs
      * @param bool $take_tests_same_day
      * @return \Illuminate\Http\Response
      */
-    public function placeOrder(string $order_number, string $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment = true, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $country)
+    public function placeOrder(string $order_number, string $phone, string $email, string $gender, string $date_of_birth, array $panel_ids, string $physician_id, string $lob, bool $fulfillment = true, string $first_name, string $last_name, string $address1, string $address2, string $city, string $state, string $postcode, string $country)
     {
         // Generate Request Data
         $request_data = [[
@@ -53,7 +54,7 @@ class MolecularTestingLabs
                 'first_name' => $first_name,
                 'last_name' => $last_name,
                 'address_1' => $address1,
-                'address_2' => '',
+                'address_2' => $address2,
                 'city' => $city,
                 'state' => $state,
                 'postcode' => $postcode,
@@ -86,7 +87,8 @@ class MolecularTestingLabs
      * @param string $dob
      * @param string $gender
      * @param string $email
-     * @param string $address
+     * @param string $address1
+     * @param string $address2
      * @param string $city
      * @param string $state
      * @param int $zip
@@ -95,7 +97,7 @@ class MolecularTestingLabs
      * @param bool $take_tests_same_day
      * @return \Illuminate\Http\Response
      */
-    public function registerKit(string $kit_id, string $pwn_req_number, string $lob, string $first_name, string $last_name, string $address1, string $city, string $state, string $postcode, string $gender, string $date_of_birth, string $email, string $phone)
+    public function registerKit(string $kit_id, string $pwn_req_number, string $lob, string $first_name, string $last_name, string $address1, string $address2, string $city, string $state, string $postcode, string $gender, string $date_of_birth, string $email, string $phone)
     {
         $registerKit = [
             [
@@ -106,7 +108,7 @@ class MolecularTestingLabs
                     'first_name' => $first_name,
                  	'last_name' => $last_name,
                     'address_1' => $address1,
-                    'address_2' => "",
+                    'address_2' => $address2,
                     'city' => $city,
                     'state' => $state,
                     'postcode' => $postcode,
